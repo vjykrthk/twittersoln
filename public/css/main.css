@@ -1,0 +1,64 @@
+body {
+  background: url(../img/watch_minimized.png) no-repeat center center fixed; 
+  -webkit-background-size: cover;
+  -moz-background-size: cover;
+  -o-background-size: cover;
+  background-size: cover;
+}
+
+#container {
+	 
+}
+
+.retweeters {
+	padding: 2em;
+	width: 600px;
+	height: 600px; 
+	position: relative; 
+	margin: 0 auto;
+}
+
+#tweeters_image { 
+	width: 100px; 
+	height: 100px; 
+	position: absolute; 
+	left: 250px; 
+	top: 250px;
+}
+.retweeter { 
+	width: 100px; 
+	height: 100px; 
+	position: absolute; 
+}
+
+.main-container {
+	width: 100%;
+	background-color: rgba(0, 0, 0, 0.5);
+	margin-top: 50px;
+	padding-top: 5px;
+	height: 125px;
+}
+
+
+.list-container {
+	width: 1400px;
+	margin: 0 auto;
+}
+
+ul {
+	list-style: none;
+}
+
+ul li{
+	float: left;
+	margin-right: 30px;
+	cursor: pointer;
+}
+
+.tweeter img {
+	width: 100px;
+	height: 100px;
+}
+
+
+

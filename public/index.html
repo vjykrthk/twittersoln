@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Twitter Puzzle</title>
+	<link rel="stylesheet" href="css/bootstrap.min.css"/>
+	<link rel="stylesheet" href="css/main.css"/>
+	<script type='text/javascript' src="js/jquery.js"></script>
+	<script type='text/javascript' src="js/bootstrap.min.js"></script>
+	<script type='text/javascript' src="js/underscore.js"></script>
+	<script type='text/javascript' src="js/handlebars.js"></script>
+	<script type='text/javascript' src="js/backbone.js"></script>
+	<script type='text/javascript' src="js/main.js"></script>
+	<script type="text/template" id="tweeters_template">
+				
+	</script>
+	<script type="type/template" id="tweeter_template">
+		<img class="img-circle" src="<%= img %>"/>
+	</script>
+	<script type="type/template" id="retweeter_template">
+		<div class="retweeter">
+			<a href="#">
+				<img rel="tooltip" title="<%= followers_count %>" class="img-circle" src="<%= img %>"/>
+			</a>
+		</div>
+	</script>
+
+	<script type="type/template" id="main_retweeter_template">
+		<div class="retweeters">
+			<div id="tweeters_image">
+				<img class="img-circle" src="<%= img %>"/>
+			</div>			
+		</div>
+	</script>
+
+	<script type="type/template" id="main_tweeter_template">
+		<div class="main-container">
+			<div class="list-container">
+			</div>
+		</div>
+	</script>
+</head>
+<body>
+	<div id="container">
+		
+	</div>	
+</body>
+</html>
