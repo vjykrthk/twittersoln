@@ -39,9 +39,9 @@ helpers do
 		retweeters_info = users.map do |user|
 	 	 { id:user.id, img:user.profile_image_url , followers_count:user.followers_count }
 		end	
-		retweeters_info.first(10) 
 
-		retweeters_info = swapImg(retweeters_info)
+
+		retweeters_info = swapImg(retweeters_info.first(10))
 	end
 
 end
