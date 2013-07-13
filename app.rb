@@ -14,7 +14,8 @@ helpers do
     	end    
 	end
 	def getRecentTweetIds
-		tweets = Twitter.user_timeline(params[:id].to_i, count:10, exclude_replies:true).reject {|i| i.retweet_count==0 }
+		tweets = Twitter.user_timeline(params[:id].to_i, count:10, exclude_replies:true, include_rts:false).reject {|i| i.retweet_count==0 }
+		puts tweets
 		tweets.map(&:id)
 	end
 	def getTweetersInfo
@@ -28,20 +29,23 @@ helpers do
 		 users.concat(Twitter.retweeters_of(tweet_id))
 		end
 
+		puts tweet_ids
+
 		users.uniq! do |user|
 			user.id
-		end
+		end		
 
 		users.sort! do |user1, user2|
 	  		user2[:followers_count] <=> user1[:followers_count]
 		end
+
+		#users.select! { |user| Twitter.friendship?(user.id, params[:id].to_i) }
 		
-		retweeters_info = users.map do |user|
-	 	 { id:user.id, img:user.profile_image_url , followers_count:user.followers_count }
+		retweeters_info = users.first(10).map do |user|
+	 	 { id:user.id, img:user.profile_image_url , followers_count:user.followers_count, following:Twitter.friendship?(params[:id].to_i, user.id) }
 		end	
 
-
-		retweeters_info = swapImg(retweeters_info.first(10))
+		retweeters_info = swapImg(retweeters_info)
 	end
 
 end

@@ -45,7 +45,31 @@
   })(Backbone.Collection);
 
   $(function() {
-    var MainRouter, MainView, RetweetersView, TweeterView, TweetersView, router;
+    var MainRouter, MainView, RetweetersView, SpinningWheel, TweeterView, TweetersView, router, sw;
+    SpinningWheel = (function(_super) {
+
+      __extends(SpinningWheel, _super);
+
+      function SpinningWheel() {
+        return SpinningWheel.__super__.constructor.apply(this, arguments);
+      }
+
+      SpinningWheel.prototype.el = '#container';
+
+      SpinningWheel.prototype.template = _.template($('#spinner_template').html());
+
+      SpinningWheel.prototype.loadSpinner = function() {
+        return $(this.el).html(this.template());
+      };
+
+      SpinningWheel.prototype.dismissSpinner = function() {
+        return $(this.el).html("");
+      };
+
+      return SpinningWheel;
+
+    })(Backbone.View);
+    sw = new SpinningWheel;
     MainView = (function(_super) {
 
       __extends(MainView, _super);
@@ -72,6 +96,7 @@
 
       MainView.prototype.render = function() {
         var tweetersView;
+        sw.dismissSpinner();
         $(this.el).empty();
         $(this.el).append(this.mtt());
         tweetersView = new TweetersView({
@@ -81,6 +106,7 @@
       };
 
       MainView.prototype.renderMainRetweeter = function() {
+        sw.dismissSpinner();
         $(this.el).empty();
         this.renderTweeter();
         this.renderRetweeters();
@@ -109,8 +135,7 @@
         container = $("#container .retweeters");
         width = container.width();
         height = container.height();
-        angle = 0;
-        console.log("elements, container, width, heigth, angle", elements, container, width, height, angle);
+        angle = (3 * Math.PI) / 2;
         step = (2 * Math.PI) / elements.length;
         elements.each(function() {
           var x, y;
@@ -237,12 +262,16 @@
       };
 
       MainRouter.prototype.tweeters = function() {
+        console.log(sw);
+        sw.loadSpinner();
         return this.tweeters.fetch({
           reset: true
         });
       };
 
       MainRouter.prototype.retweeters = function(id) {
+        console.log(sw);
+        sw.loadSpinner();
         return this.retweeters.fetch({
           url: "retweeters/" + id,
           reset: true

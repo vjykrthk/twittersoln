@@ -13,6 +13,16 @@ class Retweeters extends Backbone.Collection
 
 
 $ ->
+	class SpinningWheel extends Backbone.View
+		el: '#container'
+		template: _.template $('#spinner_template').html()
+		loadSpinner: ->
+			$(@el).html @template()
+		dismissSpinner: ->
+			$(@el).html ""
+
+	sw = new SpinningWheel
+
 	class MainView extends Backbone.View
 		el: '#container'
 		
@@ -28,12 +38,14 @@ $ ->
 			@retweetersCollection.bind 'reset', @renderMainRetweeter
 
 		render: ->
+			sw.dismissSpinner()
 			$(@el).empty()
 			$(@el).append @mtt()
 			tweetersView = new TweetersView { collection: @options.tweetersCollection }
 			$(@el).find('.list-container').append tweetersView.render().el
 
 		renderMainRetweeter: ->
+			sw.dismissSpinner()
 			$(@el).empty()
 			@renderTweeter()
 			@renderRetweeters()
@@ -54,9 +66,9 @@ $ ->
 			container = $ "#container .retweeters"
 			width = container.width()
 			height = container.height()
-			angle = 0
+			angle = (3 * Math.PI)/2
 
-			console.log "elements, container, width, heigth, angle", elements, container, width, height, angle
+			# console.log "elements, container, width, heigth, angle", elements, container, width, height, angle
 
 			step = (2 * Math.PI) / elements.length
 
@@ -119,9 +131,13 @@ $ ->
 			@mainView = new MainView { tweetersCollection: @tweeters, retweetersCollection: @retweeters }
 
 		tweeters: ->
+			console.log sw
+			sw.loadSpinner()
 			@tweeters.fetch { reset:true }
 
 		retweeters: (id)->
+			console.log sw
+			sw.loadSpinner()
 			@retweeters.fetch { url: "retweeters/#{id}", reset:true }
 
 	router = new MainRouter()
