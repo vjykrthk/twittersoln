@@ -7,45 +7,65 @@ before do
 end
 
 helpers do
+
 	def swapImg(arr)
 		arr.map do |b|
-      		b[:img] = b[:img].gsub(/_normal/, "_bigger")
+      		b[:img] = b[:img].gsub(/_normal/, "")
       		b
     	end    
 	end
+
 	def getRecentTweetIds
-		tweets = Twitter.user_timeline(params[:id].to_i, count:10, exclude_replies:true, include_rts:false).reject {|i| i.retweet_count==0 }
-		puts tweets
+		tweets = Twitter.user_timeline(params[:id].to_i, exclude_replies:true, include_rts:false).reject {|i| i.retweet_count==0 }
 		tweets.map(&:id)
 	end
+
 	def getTweetersInfo
 		tweeter = Twitter.user(params[:id].to_i)
-		{:tweeter_id => tweeter.id, img:tweeter.profile_image_url.gsub(/_normal/, "_bigger")}
+		{:tweeter_id => tweeter.id, img:tweeter.profile_image_url.gsub(/_normal/, "")}
 	end
-	def getRetweetersInfo(tweet_ids)
-		users = []
 
+	def multiplyFollowersCountbyNoOfRetweets(users)
+		noRetweetsByUser = {}
+
+		users.each do |u|
+			if noRetweetsByUser[u.id].nil?
+				noRetweetsByUser[u.id] = 1
+			else
+				noRetweetsByUser[u.id] += 1
+			end    
+		end
+
+		users.uniq! do |user|
+		  user.id
+		end
+
+		users.map! do |u|
+		  { id: u.id, img:u.profile_image_url, followers_count:u.followers_count*noRetweetsByUser[u.id] }
+		end
+	end
+
+	def sortRetweetersByFollowers(users)
+		users.sort! do |user1, user2|
+			user2[:followers_count] <=> user1[:followers_count]
+		end
+	end
+
+	def getRetweetersForTweetIds(tweet_ids)
+		users = []
 		tweet_ids.collect do |tweet_id|
 		 users.concat(Twitter.retweeters_of(tweet_id))
 		end
+	end
 
-		puts tweet_ids
+	def getRetweetersInfo(tweet_ids)
+		retweeters = getRetweetersForTweetIds(tweet_ids)		
 
-		users.uniq! do |user|
-			user.id
-		end		
+		retweeters = multiplyFollowersCountbyNoOfRetweets(retweeters)			
 
-		users.sort! do |user1, user2|
-	  		user2[:followers_count] <=> user1[:followers_count]
-		end
+		retweeters = sortRetweetersByFollowers(retweeters)
 
-		#users.select! { |user| Twitter.friendship?(user.id, params[:id].to_i) }
-		
-		retweeters_info = users.first(10).map do |user|
-	 	 { id:user.id, img:user.profile_image_url , followers_count:user.followers_count, following:Twitter.friendship?(params[:id].to_i, user.id) }
-		end	
-
-		retweeters_info = swapImg(retweeters_info)
+		swapImg(retweeters.first(10))
 	end
 
 end

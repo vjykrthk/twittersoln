@@ -60,13 +60,11 @@ ul li{
 	height: 100px;
 }
 
-.spinner {
-	width : 124px;
-    height : 124px;
-    background-image : url(../img/spinner.gif);
-    background-position: center center;
-    background-repeat: no-repeat;
+.retweeter img {
+	height: 100px;
+	width: 100px;
 }
+
 
 
 

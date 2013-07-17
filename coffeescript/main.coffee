@@ -131,12 +131,10 @@ $ ->
 			@mainView = new MainView { tweetersCollection: @tweeters, retweetersCollection: @retweeters }
 
 		tweeters: ->
-			console.log sw
 			sw.loadSpinner()
 			@tweeters.fetch { reset:true }
 
 		retweeters: (id)->
-			console.log sw
 			sw.loadSpinner()
 			@retweeters.fetch { url: "retweeters/#{id}", reset:true }
 
