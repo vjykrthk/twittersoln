@@ -1,6 +1,7 @@
 require 'sinatra'
 require 'twitter'
 require 'json'
+require 'awesome_print'
 
 before do
 	content_type :json
@@ -16,7 +17,7 @@ helpers do
 	end
 
 	def getRecentTweetIds
-		tweets = Twitter.user_timeline(params[:id].to_i, exclude_replies:true, include_rts:false).reject {|i| i.retweet_count==0 }
+		tweets = Twitter.user_timeline(params[:id].to_i , count:10 , exclude_replies:true, include_rts:false, trim_user:true, include_entities:false, ).reject {|i| i.retweet_count==0 }
 		tweets.map(&:id)
 	end
 
@@ -28,11 +29,11 @@ helpers do
 	def multiplyFollowersCountbyNoOfRetweets(users)
 		noRetweetsByUser = {}
 
-		users.each do |u|
-			if noRetweetsByUser[u.id].nil?
-				noRetweetsByUser[u.id] = 1
+		users.each do |user|
+			if noRetweetsByUser[user.id].nil?
+				noRetweetsByUser[user.id] = 1
 			else
-				noRetweetsByUser[u.id] += 1
+				noRetweetsByUser[user.id] += 1
 			end    
 		end
 
@@ -40,8 +41,8 @@ helpers do
 		  user.id
 		end
 
-		users.map! do |u|
-		  { id: u.id, img:u.profile_image_url, followers_count:u.followers_count*noRetweetsByUser[u.id] }
+		users.map! do |user|
+		  { id: user.id, img:user.profile_image_url, followers_count:user.followers_count*noRetweetsByUser[user.id] }
 		end
 	end
 
@@ -52,9 +53,8 @@ helpers do
 	end
 
 	def getRetweetersForTweetIds(tweet_ids)
-		users = []
-		tweet_ids.collect do |tweet_id|
-		 users.concat(Twitter.retweeters_of(tweet_id))
+		tweet_ids.inject([]) do |users, tweet_id|
+			users.concat(Twitter.retweeters_of(tweet_id))
 		end
 	end
 
@@ -88,6 +88,8 @@ end
 get '/retweeters/:id' do
 
 	tweet_ids = getRecentTweetIds
+
+	puts tweet_ids
 
 	{ :tweeter => getTweetersInfo, :retweeters => getRetweetersInfo(tweet_ids) }.to_json
 
