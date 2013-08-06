@@ -18,6 +18,7 @@ helpers do
 
 	def getRecentTweetIds
 		tweets = Twitter.user_timeline(params[:id].to_i , count:10 , exclude_replies:true, include_rts:false, trim_user:true, include_entities:false, ).reject {|i| i.retweet_count==0 }
+		puts tweets.inspect
 		tweets.map(&:id)
 	end
 
@@ -88,8 +89,6 @@ end
 get '/retweeters/:id' do
 
 	tweet_ids = getRecentTweetIds
-
-	puts tweet_ids
 
 	{ :tweeter => getTweetersInfo, :retweeters => getRetweetersInfo(tweet_ids) }.to_json
 
